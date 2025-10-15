@@ -13,7 +13,7 @@ func main() {
 	interval := flag.Duration("interval", 5*time.Minute, "interval between resets")
 	flag.Parse()
 
-	ctx, cancel := context.WithTimeout(context.Background(), *interval)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	timestamp := time.Now().Format(time.RFC3339)
