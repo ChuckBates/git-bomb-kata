@@ -1,10 +1,10 @@
 package main
 
 import (
-	"bytes"
 	"context"
 	"flag"
 	"fmt"
+	"io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -53,7 +53,6 @@ func main() {
 }
 
 func reset(ctx context.Context) error {
-	changes := dirtyFiles(ctx)
 	timestamp := time.Now().Format(time.RFC3339)
 	fmt.Printf("[%s] git-bomb: executing git reset --hard \n", timestamp)
 	cmd := exec.CommandContext(ctx, "git", "reset", "--hard")
@@ -62,46 +61,26 @@ func reset(ctx context.Context) error {
 		fmt.Print(string(output))
 	}
 
+	time.Sleep(120 * time.Millisecond)
+
+	_ = triggerTreeRefresh()
 	_ = triggerFileSystemRefresh()
-	_ = triggerFileChangesRefresh(changes)
 
 	return nil
 }
 
-func dirtyFiles(ctx context.Context) []string {
-	cmd := exec.CommandContext(ctx, "git", "status", "--porcelain", "-z")
-	output, err := cmd.Output()
-	if err != nil {
-		return nil
-	}
-
-	parts := bytes.Split(output, []byte{0}) // NUL-separated
-	out := make([]string, 0, len(parts))
-	for _, rec := range parts {
-		if len(rec) == 0 {
-			continue
-		}
-
-		if len(rec) >= 4 {
-			p1 := string(rec[3:])
-			out = append(out, p1)
-		}
-	}
-	return out
-}
-
-func triggerFileChangesRefresh(paths []string) error {
+func triggerTreeRefresh() error {
 	now := time.Now()
-	for _, path := range paths {
-		path = strings.TrimSpace(path)
-		if path == "" {
-			continue
+	return filepath.WalkDir(".", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return nil
 		}
-		if info, err := os.Stat(path); err == nil && !info.IsDir() {
-			os.Chtimes(path, now, now)
+		if path == ".git" || strings.HasPrefix(path, ".git"+string(os.PathSeparator)) {
+			return fs.SkipDir
 		}
-	}
-	return nil
+		_ = os.Chtimes(path, now, now)
+		return nil
+	})
 }
 
 func triggerFileSystemRefresh() error {
