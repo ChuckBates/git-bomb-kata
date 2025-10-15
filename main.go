@@ -16,11 +16,16 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), *interval)
 	defer cancel()
 
-	fmt.Printf("git-bomb: resetting repo every %v\n", *interval)
+	timestamp := time.Now().Format(time.RFC3339)
+	fmt.Printf("[%s] git-bomb: resetting repo every %v\n", timestamp, *interval)
+
+	timestamp = time.Now().Format(time.RFC3339)
+	fmt.Printf("[%s] git-bomb: performing initial reset\n", timestamp)
 
 	resetErr := reset(ctx)
 	if resetErr != nil {
-		fmt.Printf("git-bomb: error resetting repo %v\n", resetErr)
+		timestamp = time.Now().Format(time.RFC3339)
+		fmt.Printf("[%s] git-bomb: error resetting repo %v\n", timestamp, resetErr)
 		os.Exit(1)
 	}
 
@@ -35,7 +40,8 @@ func main() {
 		case <-ticker.C:
 			resetErr = reset(ctx)
 			if resetErr != nil {
-				fmt.Printf("git-bomb: error resetting repo %v\n", resetErr)
+				timestamp := time.Now().Format(time.RFC3339)
+				fmt.Printf("[%s] git-bomb: error resetting repo %v\n", timestamp, resetErr)
 				os.Exit(1)
 			}
 		}
@@ -43,8 +49,8 @@ func main() {
 }
 
 func reset(ctx context.Context) error {
-	timestamp := time.Now()
-	fmt.Printf("git-bomb: executing git reset --hard %v\n", timestamp)
+	timestamp := time.Now().Format(time.RFC3339)
+	fmt.Printf("[%s] git-bomb: executing git reset --hard \n", timestamp)
 	cmd := exec.CommandContext(ctx, "git", "reset", "--hard")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
