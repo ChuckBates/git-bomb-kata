@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"flag"
 	"fmt"
@@ -68,18 +69,34 @@ func reset(ctx context.Context) error {
 }
 
 func dirtyFiles(ctx context.Context) []string {
-	cmd := exec.CommandContext(ctx, "git", "status", "--porcelain", "-z"
+	cmd := exec.CommandContext(ctx, "git", "status", "--porcelain", "-z")
 	output, err := cmd.Output()
 	if err != nil {
 		return nil
 	}
 
-	return strings.Split(string(output), "\n")
+	parts := bytes.Split(output, []byte{0}) // NUL-separated
+	out := make([]string, 0, len(parts))
+	for _, rec := range parts {
+		if len(rec) == 0 {
+			continue
+		}
+
+		if len(rec) >= 4 {
+			p1 := string(rec[3:])
+			out = append(out, p1)
+		}
+	}
+	return out
 }
 
 func triggerFileChangesRefresh(paths []string) error {
 	now := time.Now()
 	for _, path := range paths {
+		path = strings.TrimSpace(path)
+		if path == "" {
+			continue
+		}
 		if info, err := os.Stat(path); err == nil && !info.IsDir() {
 			os.Chtimes(path, now, now)
 		}
@@ -93,14 +110,14 @@ func triggerFileSystemRefresh() error {
 		return err
 	}
 
-	file, err := os.CreateTemp(absolutePath, ".git-bomb-kata-temp")
+	file, err := os.CreateTemp(absolutePath, ".git-bomb-kata-*")
 	if err != nil {
 		return err
 	}
-
+	file.Write([]byte{'x'})
 	name := file.Name()
 	file.Close()
 
-	time.Sleep(25 * time.Millisecond)
+	time.Sleep(40 * time.Millisecond)
 	return os.Remove(name)
 }
