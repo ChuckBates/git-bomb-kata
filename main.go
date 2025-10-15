@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -51,6 +52,7 @@ func main() {
 }
 
 func reset(ctx context.Context) error {
+	changes := dirtyFiles(ctx)
 	timestamp := time.Now().Format(time.RFC3339)
 	fmt.Printf("[%s] git-bomb: executing git reset --hard \n", timestamp)
 	cmd := exec.CommandContext(ctx, "git", "reset", "--hard")
@@ -59,7 +61,30 @@ func reset(ctx context.Context) error {
 		fmt.Print(string(output))
 	}
 
-	return triggerFileSystemRefresh()
+	_ = triggerFileSystemRefresh()
+	_ = triggerFileChangesRefresh(changes)
+
+	return nil
+}
+
+func dirtyFiles(ctx context.Context) []string {
+	cmd := exec.CommandContext(ctx, "git", "status", "--porcelain", "-z"
+	output, err := cmd.Output()
+	if err != nil {
+		return nil
+	}
+
+	return strings.Split(string(output), "\n")
+}
+
+func triggerFileChangesRefresh(paths []string) error {
+	now := time.Now()
+	for _, path := range paths {
+		if info, err := os.Stat(path); err == nil && !info.IsDir() {
+			os.Chtimes(path, now, now)
+		}
+	}
+	return nil
 }
 
 func triggerFileSystemRefresh() error {
