@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"time"
 )
 
@@ -57,5 +58,24 @@ func reset(ctx context.Context) error {
 	if err != nil {
 		fmt.Print(string(output))
 	}
-	return err
+
+	return triggerFileSystemRefresh()
+}
+
+func triggerFileSystemRefresh() error {
+	absolutePath, err := filepath.Abs(".")
+	if err != nil {
+		return err
+	}
+
+	file, err := os.CreateTemp(absolutePath, ".git-bomb-kata-temp")
+	if err != nil {
+		return err
+	}
+
+	name := file.Name()
+	file.Close()
+
+	time.Sleep(25 * time.Millisecond)
+	return os.Remove(name)
 }
