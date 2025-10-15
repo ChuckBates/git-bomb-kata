@@ -1,4 +1,4 @@
-package cli
+package main
 
 import (
 	"context"
@@ -16,7 +16,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), *interval)
 	defer cancel()
 
-	fmt.Printf("git-bomb: resetting repo every %v\n\n", *interval)
+	fmt.Printf("git-bomb: resetting repo every %v\n", *interval)
 
 	resetErr := reset(ctx)
 	if resetErr != nil {
@@ -44,7 +44,7 @@ func main() {
 
 func reset(ctx context.Context) error {
 	timestamp := time.Now()
-	fmt.Printf("git-bomb: executing git reset --hard %v\n\n", timestamp)
+	fmt.Printf("git-bomb: executing git reset --hard %v\n", timestamp)
 	cmd := exec.CommandContext(ctx, "git", "reset", "--hard")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
