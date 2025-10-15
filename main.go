@@ -35,12 +35,13 @@ func main() {
 	for {
 		select {
 		case <-ctx.Done():
-			fmt.Println("git-bomb: Shutting down")
+			timestamp = time.Now().Format(time.RFC3339)
+			fmt.Printf("[%s] git-bomb: Shutting down \n", timestamp)
 			return
 		case <-ticker.C:
 			resetErr = reset(ctx)
 			if resetErr != nil {
-				timestamp := time.Now().Format(time.RFC3339)
+				timestamp = time.Now().Format(time.RFC3339)
 				fmt.Printf("[%s] git-bomb: error resetting repo %v\n", timestamp, resetErr)
 				os.Exit(1)
 			}
