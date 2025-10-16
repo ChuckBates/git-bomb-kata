@@ -59,3 +59,12 @@ func TestIntToRomanVII(t *testing.T) {
 
 	assert.Equal(t, expected, actual)
 }
+
+func TestIntToRomanIX(t *testing.T) {
+	input := 7
+	expected := "VII"
+
+	actual := IntToRoman(input)
+
+	assert.Equal(t, expected, actual)
+}
