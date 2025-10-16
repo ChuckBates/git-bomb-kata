@@ -1,0 +1,50 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start Git Bomb",
+      "type": "shell",
+      "command": "go run . -interval ${input:interval}",
+      "group":"build",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "Run kata tests (watch)",
+      "type": "shell",
+      "command": "zsh -lc 'while true; do go test ./katas/roman_numerals -v -count=1; sleep 5; done'",
+      "group": "build",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "Run kata tests",
+      "type": "shell",
+      "command": "go test ./katas/roman_numerals",
+      "group": "build",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    }
+  ],
+  "inputs": [
+    {
+        "id": "interval",
+        "type": "pickString",
+        "description": "Select reset interval",
+        "options": ["30s", "2m", "5m", "8m", "10m"],
+        "default": "5m"
+    }
+  ]
+}

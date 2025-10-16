@@ -1,0 +1,10 @@
+{
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 400,
+  "files.simpleDialog.enable": true,
+
+  "go.useLanguageServer": true,
+  "go.testTimeout": "60s",
+  "go.formatTool": "gofmt",
+  "go.lintTool": "staticcheck"  
+}
