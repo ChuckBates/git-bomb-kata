@@ -61,8 +61,8 @@ func TestIntToRomanVII(t *testing.T) {
 }
 
 func TestIntToRomanIX(t *testing.T) {
-	input := 7
-	expected := "VII"
+	input := 9
+	expected := "XI"
 
 	actual := IntToRoman(input)
 
