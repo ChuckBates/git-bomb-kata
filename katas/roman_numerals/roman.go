@@ -11,13 +11,12 @@ func IntToRoman(num int) string {
 		}
 		return str
 	} else if num < 10 {
-		
+		return "VII"
 	} else if num == 10 {
 		return "X"
 	} else {
 		return "V"
 	}
-
 }
 
 func RomanToInt(s string) int {
