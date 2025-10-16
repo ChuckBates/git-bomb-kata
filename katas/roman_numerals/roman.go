@@ -5,10 +5,10 @@ func IntToRoman(num int) string {
 		if num == 4 {
 			return "IV"
 		}
-
+		return getI(num)
 	} else if num < 10 {
 		remainder := num % 5
-		return "V"
+		return "V" + getI(remainder)
 	} else if num == 10 {
 		return "X"
 	} else {
