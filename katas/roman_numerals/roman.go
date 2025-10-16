@@ -10,6 +10,10 @@ func IntToRoman(num int) string {
 			str += "I"
 		}
 		return str
+	} else if num < 10 {
+		
+	} else if num == 10 {
+		return "X"
 	} else {
 		return "V"
 	}
