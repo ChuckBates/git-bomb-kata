@@ -2,6 +2,9 @@ package roman_numerals
 
 func IntToRoman(num int) string {
 	if num < 5 {
+		if num == 4 {
+			return "IV"
+		}
 		str := ""
 		for range num {
 			str += "I"
