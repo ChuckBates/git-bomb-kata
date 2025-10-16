@@ -2,7 +2,11 @@ package roman_numerals
 
 func IntToRoman(num int) string {
 	if num < 5 {
-		return "I"
+		str := ""
+		for _ := range num {
+			str = append(str, "I")
+		}
+		return str
 	} else {
 		return "V"
 	}
