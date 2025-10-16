@@ -5,18 +5,23 @@ func IntToRoman(num int) string {
 		if num == 4 {
 			return "IV"
 		}
-		str := ""
-		for range num {
-			str += "I"
-		}
-		return str
+
 	} else if num < 10 {
-		return "VII"
+		remainder := num % 5
+		return "V"
 	} else if num == 10 {
 		return "X"
 	} else {
 		return "V"
 	}
+}
+
+func getI(num int) string {
+	str := ""
+	for range num {
+		str += "I"
+	}
+	return str
 }
 
 func RomanToInt(s string) int {
