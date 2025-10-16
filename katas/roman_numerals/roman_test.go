@@ -14,3 +14,13 @@ func TestIntToRoman(t *testing.T) {
 
 	assert.Equal(t, expected, actual)
 }
+
+
+func TestRomanToInt(t *testing.T) {
+	input := "I"
+	expected := 1
+
+	actual := RomanToInt(input)
+
+	assert.Equal(t, expected, actual)
+}
